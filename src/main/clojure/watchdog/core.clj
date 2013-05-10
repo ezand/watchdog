@@ -26,7 +26,11 @@
 (defn start-watching []
   (loop []
     (let [key (.take watch-service)]
-      (prn (-> (.watchable key) (.getFileName)))
+      (doseq [event (.pollEvents key)]
+        (let [event-kind (.kind event)]
+          (prn (str "Event: " (.name event-kind)))
+          (let [file (.getPath file-system (str (.watchable key)) (into-array String [(str (.context event))]))]
+            (prn (str "File: " file)))))
       (if (= (.reset key) true) (recur)))))
 
 ;  (while true
