@@ -4,3 +4,11 @@ pom.xml
 /classes/
 /targets/
 .lein-deps-sum
+.lein-repl-history
+.lein-failures
+.idea
+*.iml
+*.ipr
+*.iws
+target
+src/test/resources/settings.clj
