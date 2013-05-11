@@ -16,6 +16,9 @@
     (into-array WatchEvent$Kind (vals event-kinds))
     (into-array WatchEvent$Kind (vals (select-keys event-kinds events)))))
 
+;(defn- to-path [path]
+;  (.getPath file-system path (into-array String [])))
+
 (defn- walk-tree [directory]
   (map #(.toPath %1) (filter fs/directory? (file-seq (fs/file directory)))))
 
@@ -37,13 +40,6 @@
             (prn (str "File: " file)))))
       (.reset key)
       (recur))))
-
-;  (while true
-;    (prn "Listenting...")
-;    (let [key (.take watch-service)]
-;      (prn (-> (.watchable key) (.getFileName)))
-;      (if-not (.reset key) (break))
-;      )))
 
 ; Clojure agent example
 ;(defn read-agent-error-handler [agnt, exception]
