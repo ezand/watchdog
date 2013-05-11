@@ -1,5 +1,6 @@
 (ns watchdog.core
-  (:import [java.nio.file FileSystems WatchService Path WatchEvent$Kind StandardWatchEventKinds]))
+  (:import [java.nio.file FileSystems WatchService Path WatchEvent$Kind StandardWatchEventKinds])
+  (:require [me.raynes.fs :as fs]))
 
 (def ^:private file-system (FileSystems/getDefault))
 (def ^:private file-stores (iterator-seq (.iterator (.getFileStores file-system))))
@@ -10,18 +11,21 @@
    :delete StandardWatchEventKinds/ENTRY_DELETE
    :modify StandardWatchEventKinds/ENTRY_MODIFY})
 
-(defn- get-path [directory]
-  (.getPath file-system directory (into-array String [])))
-
 (defn- get-event-kinds [events]
-  (if (= events nil)
+  (if (= events "all")
     (into-array WatchEvent$Kind (vals event-kinds))
     (into-array WatchEvent$Kind (vals (select-keys event-kinds events)))))
 
-(defn watch [directory & events]
-  (let [watch-key (-> (get-path directory) (.register watch-service (get-event-kinds events)))]
-    (let [directory-watcher-agent (agent watch-key)])
-    ))
+(defn- walk-tree [directory]
+  (map #(.toPath %1) (filter fs/directory? (file-seq (fs/file directory)))))
+
+(defn watch
+  ([directory events] (watch directory true events))
+  ([directory recursive? events]
+    (let [directories (if recursive? (walk-tree directory) directory)]
+      (doseq [dir directories]
+        (let [watch-key (-> dir (.register watch-service (get-event-kinds events)))]
+          (let [directory-watcher-agent (agent watch-key)]))))))
 
 (defn start-watching []
   (loop []
@@ -31,7 +35,8 @@
           (prn (str "Event: " (.name event-kind)))
           (let [file (.getPath file-system (str (.watchable key)) (into-array String [(str (.context event))]))]
             (prn (str "File: " file)))))
-      (if (= (.reset key) true) (recur)))))
+      (.reset key)
+      (recur))))
 
 ;  (while true
 ;    (prn "Listenting...")
