@@ -5,4 +5,5 @@
   :source-paths ["src/main/clojure"]
   :test-paths ["src/test/clojure"]
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [me.raynes/fs "1.4.2"]])
+                 [me.raynes/fs "1.4.2"]
+                 [lamina "0.5.0-rc2"]])

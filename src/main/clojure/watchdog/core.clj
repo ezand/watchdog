@@ -1,6 +1,7 @@
 (ns watchdog.core
   (:import [java.nio.file FileSystems WatchService Path WatchEvent$Kind StandardWatchEventKinds])
-  (:require [me.raynes.fs :as fs]))
+  (:require [me.raynes.fs :as fs])
+  (:use [lamina.core]))
 
 (def ^:private file-system (FileSystems/getDefault))
 (def ^:private file-stores (iterator-seq (.iterator (.getFileStores file-system))))
@@ -21,6 +22,14 @@
 
 (defn- walk-tree [directory]
   (map #(.toPath %1) (filter fs/directory? (file-seq (fs/file directory)))))
+
+(defn watch-all
+  ([directories events] (watch2 directories true events))
+  ([directories recursive? events]
+    (let [all-directories (if recursive? directories directories)]
+      (doseq [dir directories]
+        (let [watch-key (-> dir (.register watch-service (get-event-kinds events)))]
+          (let [directory-watcher-agent (agent watch-key)]))))))
 
 (defn watch
   ([directory events] (watch directory true events))
