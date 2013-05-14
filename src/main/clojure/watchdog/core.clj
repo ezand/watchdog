@@ -24,7 +24,7 @@
   (map #(.toPath %1) (filter fs/directory? (file-seq (fs/file directory)))))
 
 (defn watch-all
-  ([directories events] (watch2 directories true events))
+  ([directories events] (watch-all directories true events))
   ([directories recursive? events]
     (let [all-directories (if recursive? directories directories)]
       (doseq [dir directories]
