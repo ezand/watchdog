@@ -41,12 +41,17 @@
     (let [all-directories (if recursive? (first (map walk-tree directories)) (map to-path directories))] ;TODO find better way
       (doseq [dir all-directories]
         (let [watch-key (-> dir (.register watch-service (get-event-kinds events)))]
-          (alter-var-root (var *watch-keys*) (constantly (conj *watch-keys* (assoc *watch-keys* (.hashCode dir) watch-key))))
+          (alter-var-root (var *watch-keys*) (constantly (conj *watch-keys* (assoc *watch-keys* (str dir) watch-key))))
           (alter-var-root (var *callbacks*) (constantly (conj *callbacks* (assoc *callbacks* watch-key callback)))))))))
 
-(defn un-watch [directories]
-  (doseq [directory directories]
-    (let [key (.hashCode directory)]
-      (let [watch-key (get *watch-keys* key)]
-        (.cancel watch-key)
-        (alter-var-root (var *watch-keys*) (constantly (dissoc *watch-keys* key)))))))
+(defn unwatch
+  ([directories] (un-watch directories true))
+  ([directories recursive?]
+    (let [all-directories (if recursive? (first (map walk-tree directories)) (map to-path directories))]
+      (doseq [directory all-directories]
+        (let [key (str directory)]
+          (let [watch-key (get *watch-keys* key)]
+            (.cancel watch-key)
+            (alter-var-root (var *watch-keys*) (constantly (dissoc *watch-keys* key)))))))))
+
+(defn watching [] (map to-path (keys *watch-keys*)))
