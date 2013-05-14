@@ -25,7 +25,7 @@
       (recur))))
 
 (defn- get-event-kinds [events]
-  (if (= events "all")
+  (if (= events :all)
     (into-array WatchEvent$Kind (vals event-kinds))
     (into-array WatchEvent$Kind (vals (select-keys event-kinds events)))))
 
