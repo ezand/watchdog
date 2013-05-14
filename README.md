@@ -6,8 +6,6 @@ WatchDog is a Clojure library that lets you watch for directory- and file change
 
 ## Install
 
-WatchDog has two main functions, `watch` and `unwatch` which registeres and unregisteres directories against the watch service.
-
 ### Leiningen
 
 ```clojure
@@ -24,7 +22,11 @@ WatchDog has two main functions, `watch` and `unwatch` which registeres and unre
 </dependency>
 ```
 
-## Watching directories
+## Usage
+
+WatchDog has two main functions, `watch` and `unwatch` which registeres and unregisteres directories against the watch service.
+
+### Watching directories
 ```clojure
 ;Function to handle the watch event. This will be called for all registered events.
 (defn- watch-callback [watch-event]
@@ -35,7 +37,12 @@ WatchDog has two main functions, `watch` and `unwatch` which registeres and unre
 
 ;Watch specified paths excluding all sub-folders. Listen for all change events.
 (watch ["/your/path" "/some/path"] false :all watch-callback)
+```
 
+### View currently watched paths
+
+```clojure
 ;Return all currently watched paths
 (watching)
 ```
+
