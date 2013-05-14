@@ -1,6 +1,6 @@
-<img style="vertical-align: middle" src="src/main/resources/watchdog.png" />WatchDog
+WatchDog
 ========
 
 ![Build Status](https://travis-ci.org/ezand/watchdog.png?branch=master)
 
-A Clojure wrapper for the Java 7 directory watcher API
+![WatchDog](src/main/resources/watchdog.png) WatchDog is a Clojure library that lets you watch for directory- and file changes.
