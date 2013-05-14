@@ -39,10 +39,31 @@ WatchDog has two main functions, `watch` and `unwatch` which registeres and unre
 (watch ["/your/path" "/some/path"] false :all watch-callback)
 ```
 
-### View currently watched paths
+### View currently watched directories
 
 ```clojure
-;Return all currently watched paths
+;Return all currently watched directories
 (watching)
 ```
 
+### Unwatch directories
+
+```clojure
+;Unwatch specified paths including all sub-folders.
+(unwatch ["/your/path"])
+
+;Unwatch specified paths excluding all sub-folders.
+(unwatch ["/your/path"] false)
+```
+
+### Watch events
+
+Available watch events are `:create`, `:delete` and `:modify`. To listen for all events, specify `:all`.
+
+```clojure
+;Listen for all change events
+(watch ["/your/path"] :all watch-callback)
+
+;Listen for create and delete events only
+(watch ["/your/path"] [:create :delete] watch-callback)
+```
