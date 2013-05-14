@@ -1,5 +1,5 @@
 (defproject watchdog "1.0.0"
-  :description "A Clojure wrapper for the Java 7 directory watcher API"
+  :description "WatchDog is a Clojure library that lets you watch for directory- and file changes"
   :url "http://github.com/ezand/watchdog"
   :java-source-paths ["src/main/java"]
   :source-paths ["src/main/clojure"]
