@@ -45,7 +45,7 @@
           (alter-var-root (var *callbacks*) (constantly (conj *callbacks* (assoc *callbacks* watch-key callback)))))))))
 
 (defn unwatch
-  ([directories] (un-watch directories true))
+  ([directories] (unwatch directories true))
   ([directories recursive?]
     (let [all-directories (if recursive? (first (map walk-tree directories)) (map to-path directories))]
       (doseq [directory all-directories]
