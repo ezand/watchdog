@@ -1,4 +1,4 @@
-![WatchDog](src/main/resources/watchdog.png) watchdog
+<img style="vertical-align: middle" src="src/main/resources/watchdog.png" />WatchDog
 ========
 
 ![Build Status](https://travis-ci.org/ezand/watchdog.png?branch=master)
