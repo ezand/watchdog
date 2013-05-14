@@ -3,6 +3,7 @@
   (:require [me.raynes.fs :as fs])
   (:use [lamina.core]))
 
+(def ^:private ^:dynamic *watch-keys* {})
 (def ^:private file-system (FileSystems/getDefault))
 (def ^:private file-stores (iterator-seq (.iterator (.getFileStores file-system))))
 (def ^:private watch-service (.newWatchService file-system))
@@ -17,27 +18,28 @@
     (into-array WatchEvent$Kind (vals event-kinds))
     (into-array WatchEvent$Kind (vals (select-keys event-kinds events)))))
 
-;(defn- to-path [path]
-;  (.getPath file-system path (into-array String [])))
+(defn- to-path [path]
+  (.getPath file-system path (into-array String [])))
 
 (defn- walk-tree [directory]
   (map #(.toPath %1) (filter fs/directory? (file-seq (fs/file directory)))))
 
-(defn watch-all
-  ([directories events] (watch-all directories true events))
-  ([directories recursive? events]
-    (let [all-directories (if recursive? directories directories)]
-      (doseq [dir directories]
-        (let [watch-key (-> dir (.register watch-service (get-event-kinds events)))]
-          (let [directory-watcher-agent (agent watch-key)]))))))
-
 (defn watch
-  ([directory events] (watch directory true events))
-  ([directory recursive? events]
-    (let [directories (if recursive? (walk-tree directory) directory)]
-      (doseq [dir directories]
+  ([directories events] (watch directories true events))
+  ([directories recursive? events]
+    (let [all-directories (if recursive? (first (map walk-tree directories)) (map to-path directories))] ;TODO find better way
+      (doseq [dir all-directories]
         (let [watch-key (-> dir (.register watch-service (get-event-kinds events)))]
-          (let [directory-watcher-agent (agent watch-key)]))))))
+          (alter-var-root (var *watch-keys*) (constantly (conj *watch-keys* (assoc *watch-keys* (.hashCode dir) watch-key))))
+          (let [directory-watcher-agent (agent watch-key)]))))
+    (prn *watch-keys*)))
+
+(defn un-watch [directories]
+  (doseq [directory directories]
+    (let [key (.hashCode directory)]
+      (let [watch-key (get *watch-keys* key)]
+        (.cancel watch-key)
+        (alter-var-root (var *watch-keys*) (constantly (dissoc *watch-keys* key)))))))
 
 (defn start-watching []
   (loop []
