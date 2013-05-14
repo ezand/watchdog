@@ -28,15 +28,18 @@ WatchDog has two main functions, `watch` and `unwatch` which registeres and unre
 
 ### Watching directories
 ```clojure
-;Function to handle the watch event. This will be called for all registered events.
-(defn- watch-callback [watch-event]
-  (prn watch-event))
+(ns my.app
+  (:require [watchdog.core])
 
-;Watch specified paths including all sub-folders. Listen for all change events.
-(watch ["/your/path" "/some/path"] :all watch-callback)
+  ;Function to handle the watch event. This will be called for all registered events.
+  (defn- watch-callback [watch-event]
+    (prn watch-event))
 
-;Watch specified paths excluding all sub-folders. Listen for all change events.
-(watch ["/your/path" "/some/path"] false :all watch-callback)
+  ;Watch specified paths including all sub-folders. Listen for all change events.
+  (watch ["/your/path" "/some/path"] :all watch-callback)
+
+  ;Watch specified paths excluding all sub-folders. Listen for all change events.
+  (watch ["/your/path" "/some/path"] false :all watch-callback))
 ```
 
 ### View currently watched directories
