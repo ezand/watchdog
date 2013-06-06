@@ -9,7 +9,7 @@ WatchDog is a Clojure library that lets you watch for directory- and file change
 ### Leiningen
 
 ```clojure
-[watchdog "1.0.1"]
+[watchdog "1.0.2"]
 ```
 
 ### Maven
