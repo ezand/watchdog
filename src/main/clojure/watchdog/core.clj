@@ -1,5 +1,6 @@
+; TODO make it possible to have multiple watchdogs
 (ns watchdog.core
-  (:import [java.nio.file FileSystems WatchService Path WatchEvent$Kind StandardWatchEventKinds])
+  (:import [java.nio.file Files FileSystems WatchService Path WatchEvent$Kind StandardWatchEventKinds])
   (:use [clojure.java.io :as io]))
 
 (def ^:private ^:dynamic *watch-keys* {})
@@ -20,12 +21,12 @@
           (if-not (= event-kind StandardWatchEventKinds/OVERFLOW)
             (let [callback (get *callbacks* key)]
               (let [file (.getPath file-system (str (.watchable key)) (into-array String [(str (.context event))]))]
-                (callback {:event (.name event-kind) :file file}))))))
+                (callback {:event (.name event-kind) :file file :directory? (Files/isDirectory file (into-array []))}))))))
       (.reset key)
       (recur))))
 
 (defn- get-event-kinds [events]
-  (if (= events :all)
+  (if (= events :all )
     (into-array WatchEvent$Kind (vals event-kinds))
     (into-array WatchEvent$Kind (vals (select-keys event-kinds events)))))
 
